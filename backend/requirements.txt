@@ -16,6 +16,7 @@ scikit-learn
 # Geospatial
 scikit-image
 rasterio
+rio-cogeo           # GeoTIFF -> Cloud-Optimized GeoTIFF for TiTiler
 numpy
 # pandas 3.x DLLs are blocked by Windows Smart App Control (unsigned/new); 2.x passes
 pandas<3
@@ -25,6 +26,7 @@ onnxruntime
 
 # Database
 supabase
+psycopg[binary]     # direct Postgres connection for schema DDL only
 
 # Drought indices (SPI/SPEI) — Phase 3
 climate-indices

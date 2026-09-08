@@ -1,0 +1,93 @@
+{
+  "model_version": "risk-xgb-v1",
+  "label_source": "proxy_glofas_q2yr",
+  "label_definition": "1 if max GloFAS reanalysis discharge over the next 3 days >= q_2yr (1181.7 m3/s, 2-year return period from annual maxima)",
+  "q_flood": 1181.734705882353,
+  "features": [
+    "rain_mm",
+    "rain_3d",
+    "rain_7d",
+    "upstream_rain_mm",
+    "upstream_rain_7d",
+    "soil_moisture_pct",
+    "temperature_c",
+    "discharge",
+    "discharge_trend",
+    "doy_sin",
+    "doy_cos"
+  ],
+  "alert_thresholds": [
+    [
+      "green",
+      0.0
+    ],
+    [
+      "yellow",
+      0.15
+    ],
+    [
+      "orange",
+      0.4
+    ],
+    [
+      "red",
+      0.7
+    ]
+  ],
+  "trained_at": "2026-09-08T20:25:04.150045+00:00",
+  "train_period": [
+    "2010-01-01",
+    "2026-09-01"
+  ],
+  "metrics": {
+    "train": {
+      "n": 5358,
+      "positives": 43,
+      "roc_auc": 0.9999,
+      "pr_auc": 0.9831
+    },
+    "test": {
+      "years": [
+        2019,
+        2021
+      ],
+      "n": 730,
+      "positives": 10,
+      "roc_auc": 0.9871,
+      "pr_auc": 0.553
+    },
+    "lead_time": {
+      "2019": {
+        "peak_date": "2019-08-06",
+        "peak_discharge": 1931.0,
+        "first_orange_date": "2019-08-03",
+        "lead_days": 3,
+        "max_level_in_window": "red",
+        "max_p_in_window": 1.0,
+        "proxy_label_positives": 10
+      },
+      "2021": {
+        "peak_date": "2021-07-22",
+        "peak_discharge": 1105.6,
+        "first_orange_date": "2021-07-18",
+        "lead_days": 4,
+        "max_level_in_window": "red",
+        "max_p_in_window": 0.995,
+        "proxy_label_positives": 0
+      }
+    },
+    "feature_importance_gain": {
+      "rain_3d": 228.4662,
+      "rain_mm": 147.8972,
+      "upstream_rain_mm": 66.7735,
+      "rain_7d": 43.5392,
+      "discharge_trend": 34.9892,
+      "soil_moisture_pct": 18.2377,
+      "doy_cos": 17.5965,
+      "upstream_rain_7d": 14.8716,
+      "doy_sin": 14.1811,
+      "discharge": 12.5908,
+      "temperature_c": 6.8049
+    }
+  }
+}

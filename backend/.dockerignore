@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+secrets/
+data/cog_exports/
+data/cache/
+data/training/*.csv

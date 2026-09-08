@@ -1,4 +1,4 @@
-# PLAN.md — Drought & Flood Risk Prediction Platform
+2# PLAN.md — Drought & Flood Risk Prediction Platform
 ### Indradhanu 2026 — End-to-End Live Demo Blueprint
 
 **Target region:** Maharashtra (recommend Kolhapur–Sangli or Marathwada for validation against a real historical event)
