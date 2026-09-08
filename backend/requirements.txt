@@ -1,0 +1,30 @@
+# Core API
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic-settings
+
+# Data sources
+earthengine-api
+requests
+
+# ML / explainability
+xgboost
+shap
+scikit-learn
+
+# Geospatial
+scikit-image
+rasterio
+numpy
+# pandas 3.x DLLs are blocked by Windows Smart App Control (unsigned/new); 2.x passes
+pandas<3
+
+# Inference (Prithvi ONNX — Phase 2, but cheap to install now)
+onnxruntime
+
+# Database
+supabase
+
+# Drought indices (SPI/SPEI) — Phase 3
+climate-indices

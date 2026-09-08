@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Env / secrets
+.env
+.env.local
+*.serviceaccount.json
+firebase-adminsdk*.json
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Data artifacts (large rasters cached locally, re-derivable from GEE)
+backend/data/cog_exports/*.tif
+backend/data/cog_exports/*.tiff
+
+# ML artifacts
+*.onnx
+*.ubj
+*.joblib
+
+# OS / editor
+.DS_Store
+Thumbs.db
