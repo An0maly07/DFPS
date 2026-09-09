@@ -10,19 +10,51 @@
   "Government of Maharashtra GR, 31 Oct 2018",
   "IMD district rainfall statistics 2018"
  ],
- "generated_at": "2026-09-08T20:35:54.727857Z",
+ "generated_at": "2026-09-08T21:38:27.612037Z",
  "summary": {
-  "months_available": 1,
+  "months_available": 13,
   "worst_month": {
-   "month": "2018-10",
-   "spi3": -1.705,
-   "spei3": -1.705,
-   "vhi": 9,
-   "sm_z": -2.359,
+   "month": "2018-11",
+   "spi3": -2.275,
+   "spei3": -2.088,
+   "vhi": 16.8,
+   "sm_z": -2.214,
    "composite_category": "extreme"
   }
  },
  "timeline": [
+  {
+   "month": "2018-06",
+   "spi3": 0.92,
+   "spei3": 0,
+   "vhi": 62.1,
+   "sm_z": -0.135,
+   "composite_category": "normal"
+  },
+  {
+   "month": "2018-07",
+   "spi3": 0.217,
+   "spei3": -0.076,
+   "vhi": 54.5,
+   "sm_z": 0.348,
+   "composite_category": "normal"
+  },
+  {
+   "month": "2018-08",
+   "spi3": 0.109,
+   "spei3": 0.412,
+   "vhi": 60.3,
+   "sm_z": -0.441,
+   "composite_category": "normal"
+  },
+  {
+   "month": "2018-09",
+   "spi3": -1.144,
+   "spei3": -0.945,
+   "vhi": 40.4,
+   "sm_z": -3.59,
+   "composite_category": "moderate"
+  },
   {
    "month": "2018-10",
    "spi3": -1.705,
@@ -30,6 +62,70 @@
    "vhi": 9,
    "sm_z": -2.359,
    "composite_category": "extreme"
+  },
+  {
+   "month": "2018-11",
+   "spi3": -2.275,
+   "spei3": -2.088,
+   "vhi": 16.8,
+   "sm_z": -2.214,
+   "composite_category": "extreme"
+  },
+  {
+   "month": "2018-12",
+   "spi3": -1.852,
+   "spei3": -2.005,
+   "vhi": 25,
+   "sm_z": -3.425,
+   "composite_category": "severe"
+  },
+  {
+   "month": "2019-01",
+   "spi3": -0.894,
+   "spei3": -0.963,
+   "vhi": 26.9,
+   "sm_z": -2.605,
+   "composite_category": "moderate"
+  },
+  {
+   "month": "2019-02",
+   "spi3": -0.508,
+   "spei3": 0.039,
+   "vhi": 31,
+   "sm_z": -1.978,
+   "composite_category": "moderate"
+  },
+  {
+   "month": "2019-03",
+   "spi3": -1.093,
+   "spei3": -0.509,
+   "vhi": 18.2,
+   "sm_z": -6.138,
+   "composite_category": "severe"
+  },
+  {
+   "month": "2019-04",
+   "spi3": -0.196,
+   "spei3": -1.31,
+   "vhi": 20.3,
+   "sm_z": -1.11,
+   "composite_category": "mild"
+  },
+  {
+   "month": "2019-05",
+   "spi3": -1.249,
+   "spei3": -1.814,
+   "vhi": 18.5,
+   "sm_z": -0.881,
+   "composite_category": "moderate"
+  },
+  {
+   "month": "2019-06",
+   "spi3": -0.218,
+   "spei3": -1.756,
+   "vhi": 29.9,
+   "sm_z": -4.362,
+   "composite_category": "moderate"
   }
  ],
  "note": "Monthly snapshots are computed on demand (GET /api/drought-index?district=&month=&refresh=true); only the months already stored appear here."

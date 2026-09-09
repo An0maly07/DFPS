@@ -45,8 +45,8 @@ export const api = {
   events: () => request<EventsList>("/api/events"),
   forecast: (lat: number, lon: number, days = 7, pastDays = 7) =>
     request<Forecast>(`/api/forecast${qs({ lat, lon, days, past_days: pastDays })}`),
-  floodExtent: (district: string, date?: string, includeGeojson = false) =>
-    request<FloodExtent>(`/api/flood-extent${qs({ district, date, include_geojson: includeGeojson })}`),
+  floodExtent: (district: string, date?: string, includeGeojson = false, source: "sar_otsu" | "prithvi" = "sar_otsu") =>
+    request<FloodExtent>(`/api/flood-extent${qs({ district, date, include_geojson: includeGeojson, source })}`),
   latestRisk: (district: string) => request<LatestRisk>(`/api/risk-score/latest${qs({ district })}`),
   scoreRisk: (district: string, features?: Record<string, number>, persist = false) =>
     request<RiskScoreResponse>("/api/risk-score", {

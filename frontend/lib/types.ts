@@ -40,6 +40,16 @@ export interface TileSet {
   mask?: string;
   vv_post?: string;
   vv_pre?: string;
+  /** Sentinel-2 true-colour COG (Prithvi source only) */
+  s2_rgb?: string;
+}
+
+export interface ExtentModel {
+  version: string | null;
+  sensor: string | null;
+  cloud_pct: number | null;
+  usable_pct: number | null;
+  val_metrics: { zero_shot?: Record<string, number> | null; fine_tuned?: Record<string, number> | null } | null;
 }
 
 export interface FloodExtent {
@@ -56,6 +66,7 @@ export interface FloodExtent {
   area_note: string;
   thresholds_db: { post: number | null; pre: number | null; method: string | null };
   classes: Record<string, string>;
+  model: ExtentModel | null;
   available_dates: string[];
   snapshots: { date: string; flood_area_km2: number | null; event_date: string | null }[];
   /** snapshot with the largest detected flood area — the demo's opening frame */
@@ -181,9 +192,17 @@ export interface ReplayEntry {
   flood_extent?: ReplayExtent;
 }
 
-export interface Replay {
+export interface DroughtReplayEntry {
+  month: string; // YYYY-MM
+  spi3: number | null;
+  spei3: number | null;
+  vhi: number | null;
+  sm_z: number | null;
+  composite_category: string;
+}
+
+interface ReplayBase {
   event: string;
-  type: "flood" | "drought";
   region: string;
   title: string;
   start: string;
@@ -204,9 +223,20 @@ export interface Replay {
     sar_dates?: string[];
     sar_flood_area_km2?: Record<string, number | null>;
     months_available?: number;
+    worst_month?: DroughtReplayEntry | null;
   };
+}
+
+export interface FloodReplay extends ReplayBase {
+  type: "flood";
   timeline: ReplayEntry[];
 }
+export interface DroughtReplay extends ReplayBase {
+  type: "drought";
+  timeline: DroughtReplayEntry[];
+  note?: string;
+}
+export type Replay = FloodReplay | DroughtReplay;
 
 export interface RegionFeature {
   type: "Feature";

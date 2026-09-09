@@ -1,0 +1,166 @@
+{
+ "water_threshold": 0.5,
+ "threshold_sweep": [
+  {
+   "threshold": 0.3,
+   "water_iou": 0.1412,
+   "precision": 0.1444,
+   "recall": 0.8654,
+   "accuracy": 0.8736,
+   "n_valid_px": 6520864
+  },
+  {
+   "threshold": 0.4,
+   "water_iou": 0.1544,
+   "precision": 0.1594,
+   "recall": 0.8313,
+   "accuracy": 0.8907,
+   "n_valid_px": 6520864
+  },
+  {
+   "threshold": 0.5,
+   "water_iou": 0.1725,
+   "precision": 0.188,
+   "recall": 0.6771,
+   "accuracy": 0.922,
+   "n_valid_px": 6520864
+  },
+  {
+   "threshold": 0.6,
+   "water_iou": 0.0002,
+   "precision": 0.1867,
+   "recall": 0.0002,
+   "accuracy": 0.976,
+   "n_valid_px": 6520864
+  },
+  {
+   "threshold": 0.7,
+   "water_iou": 0.0,
+   "precision": 0.0,
+   "recall": 0.0,
+   "accuracy": 0.976,
+   "n_valid_px": 6520864
+  },
+  {
+   "threshold": 0.8,
+   "water_iou": 0.0,
+   "precision": 0.0,
+   "recall": 0.0,
+   "accuracy": 0.976,
+   "n_valid_px": 6520864
+  },
+  {
+   "threshold": 0.9,
+   "water_iou": 0.0,
+   "precision": 0.0,
+   "recall": 0.0,
+   "accuracy": 0.976,
+   "n_valid_px": 6520864
+  }
+ ],
+ "best_val_at_threshold": {
+  "threshold": 0.5,
+  "water_iou": 0.1725,
+  "precision": 0.188,
+  "recall": 0.6771,
+  "accuracy": 0.922,
+  "n_valid_px": 6520864
+ },
+ "model_version": "prithvi-eo-1.0-100m-sen1floods11+regional-v1",
+ "base_checkpoint": "sen1floods11_Prithvi_100M.pth",
+ "region": "kolhapur-sangli",
+ "s2_scene": "2021-07-28",
+ "label_protocol": {
+  "s2_scene": "2021-07-28",
+  "sar_after": "2021-08-03",
+  "sar_before": "2021-07-22",
+  "rule": "water := SAR water on sar_after; ignore := clouds/nodata or (water on sar_before and not on sar_after)"
+ },
+ "label_stats": {
+  "pixels": 32233598,
+  "water_pct": 1.03,
+  "land_pct": 63.34,
+  "ignore_pct": 35.63,
+  "cloud_pct": 35.45
+ },
+ "n_train": 262,
+ "n_train_available": 262,
+ "n_val": 154,
+ "split": "spatial west/east",
+ "zero_shot_val": {
+  "threshold": 0.5,
+  "water_iou": 0.0966,
+  "precision": 0.0975,
+  "recall": 0.9187,
+  "accuracy": 0.7938,
+  "n_valid_px": 6520864
+ },
+ "best_val": {
+  "epoch": 2,
+  "water_iou": 0.1725,
+  "precision": 0.188,
+  "recall": 0.6771,
+  "accuracy": 0.922,
+  "n_valid_px": 6520864
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 0.1366,
+   "sec": 755.3,
+   "water_iou": 0.0188,
+   "precision": 0.1567,
+   "recall": 0.0209,
+   "accuracy": 0.9738,
+   "n_valid_px": 6520864
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.0965,
+   "sec": 2112.2,
+   "water_iou": 0.1725,
+   "precision": 0.188,
+   "recall": 0.6771,
+   "accuracy": 0.922,
+   "n_valid_px": 6520864
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.0916,
+   "sec": 2071.0,
+   "water_iou": 0.0716,
+   "precision": 0.1548,
+   "recall": 0.1174,
+   "accuracy": 0.9634,
+   "n_valid_px": 6520864
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.0849,
+   "sec": 2053.1,
+   "water_iou": 0.058,
+   "precision": 0.1514,
+   "recall": 0.0859,
+   "accuracy": 0.9665,
+   "n_valid_px": 6520864
+  }
+ ],
+ "train_args": {
+  "region": "kolhapur-sangli",
+  "scene": "2021-07-28",
+  "epochs": 15,
+  "batch": 2,
+  "accum": 2,
+  "lr": 3e-05,
+  "freeze_blocks": 6,
+  "dice": 1.0,
+  "land_ratio": 1.5,
+  "skip_train": false,
+  "export_only": true,
+  "history_log": "C:\\Users\\VINEET\\AppData\\Local\\Temp\\claude\\c--Users-VINEET-Documents-INDRADHANU\\77b0b3c6-9fb5-4438-9af3-d3d266c6348c\\scratchpad\\finetune.log"
+ },
+ "device": "cuda",
+ "onnx": "prithvi_flood_kolhapur-sangli.onnx",
+ "onnx_mb": 390.6,
+ "caveat": "Validation labels are SAR-derived weak labels on a 6-day-offset pass, not hand-digitised truth."
+}

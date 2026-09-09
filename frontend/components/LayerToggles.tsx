@@ -1,26 +1,43 @@
 "use client";
 
-interface Props {
+export interface LayerState {
   showMask: boolean;
   showSar: boolean;
   sarImage: "vv_post" | "vv_pre";
   showDrought: boolean;
-  onChange: (patch: Partial<{ showMask: boolean; showSar: boolean; sarImage: "vv_post" | "vv_pre"; showDrought: boolean }>) => void;
-  extentLabel?: string | null;
+  /** side-by-side SAR vs Prithvi (PLAN.md §3.2) */
+  compare: boolean;
 }
 
-export default function LayerToggles({ showMask, showSar, sarImage, showDrought, onChange, extentLabel }: Props) {
+interface Props extends LayerState {
+  onChange: (patch: Partial<LayerState>) => void;
+  extentLabel?: string | null;
+  /** hide flood controls (drought replay) */
+  floodControls?: boolean;
+}
+
+export default function LayerToggles({ showMask, showSar, sarImage, showDrought, compare, onChange, extentLabel, floodControls = true }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-slate-700/70 bg-slate-800/60 px-4 py-2.5 text-xs text-slate-200">
-      <label className="flex items-center gap-1.5">
-        <input type="checkbox" checked={showMask} onChange={(e) => onChange({ showMask: e.target.checked })} className="accent-red-500" />
-        Flood extent <Swatch color="#dc1e1e" /> flood <Swatch color="#285ac8" /> water
-      </label>
-      <label className="flex items-center gap-1.5">
-        <input type="checkbox" checked={showSar} onChange={(e) => onChange({ showSar: e.target.checked })} className="accent-slate-300" />
-        SAR backscatter
-      </label>
-      {showSar && (
+      {floodControls && (
+        <>
+          <label className="flex items-center gap-1.5">
+            <input type="checkbox" checked={showMask} onChange={(e) => onChange({ showMask: e.target.checked })} className="accent-red-500" />
+            Flood extent <Swatch color="#dc1e1e" /> flood <Swatch color="#285ac8" /> water {compare && <><Swatch color="#a0a0a0" /> cloud</>}
+          </label>
+          <label className="flex items-center gap-1.5">
+            <input type="checkbox" checked={compare} onChange={(e) => onChange({ compare: e.target.checked })} className="accent-violet-500" />
+            Compare SAR vs Prithvi
+          </label>
+        </>
+      )}
+      {floodControls && !compare && (
+        <label className="flex items-center gap-1.5">
+          <input type="checkbox" checked={showSar} onChange={(e) => onChange({ showSar: e.target.checked })} className="accent-slate-300" />
+          SAR backscatter
+        </label>
+      )}
+      {floodControls && !compare && showSar && (
         <span className="flex items-center gap-1">
           {(["vv_post", "vv_pre"] as const).map((k) => (
             <button

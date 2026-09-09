@@ -4,3 +4,6 @@ secrets/
 data/cog_exports/
 data/cache/
 data/training/*.csv
+data/prithvi/
+models/artifacts/prithvi/*.pth
+models/artifacts/prithvi/*.pt

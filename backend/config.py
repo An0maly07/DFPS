@@ -17,6 +17,8 @@ class Settings(BaseSettings):
 
     gee_project_id: str = ""
     gee_service_account_json: str = ""
+    # Alternative for hosted deployments (Modal/Cloud Run secrets): the key file's *content*.
+    gee_service_account_json_content: str = ""
 
     supabase_url: str = ""
     supabase_anon_key: str = ""
@@ -54,6 +56,12 @@ class Settings(BaseSettings):
 
     @property
     def gee_key_path(self) -> Path:
+        if self.gee_service_account_json_content and not self.gee_service_account_json:
+            p = CACHE_DIR / "gee_service_account.json"
+            if not p.exists():
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text(self.gee_service_account_json_content)
+            return p
         p = Path(self.gee_service_account_json)
         return p if p.is_absolute() else REPO_ROOT / p
 

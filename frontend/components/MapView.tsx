@@ -1,10 +1,16 @@
 "use client";
 
-import { AttributionControl, Map as MLMap, NavigationControl, ScaleControl, type LayerSpecification } from "maplibre-gl";
+import { AttributionControl, Map as MLMap, NavigationControl, ScaleControl, setWorkerUrl, type LayerSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { StyleSpecification } from "maplibre-gl";
+
+// MapLibre 6 spawns its worker from `new URL('./maplibre-gl-worker.mjs', import.meta.url)`, which
+// Turbopack resolves to the page URL — the worker then loads HTML and dies silently, so GeoJSON
+// sources (region outlines, drought choropleth) never appear. Serve the worker + its shared chunk
+// from /public instead (copied from node_modules/maplibre-gl/dist; keep in sync on upgrades).
+setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
 // Default basemap: Esri World Light Gray canvas (keyless raster, attribution required).
 // Base and reference (labels) are separate sources, so overlays sit under the labels.
@@ -96,10 +102,35 @@ export interface MapViewProps {
   bounds: [number, number, number, number] | null;
   children?: ReactNode;
   className?: string;
+  /** maps sharing a syncKey follow each other's camera (side-by-side compare) */
+  syncKey?: string;
+}
+
+// camera sync registry: syncKey -> maps
+const syncGroups = new Map<string, Set<MLMap>>();
+function attachSync(map: MLMap, key: string) {
+  const group = syncGroups.get(key) ?? new Set<MLMap>();
+  group.add(map);
+  syncGroups.set(key, group);
+  let busy = false;
+  const onMove = () => {
+    if (busy) return;
+    busy = true;
+    for (const other of group) {
+      if (other === map) continue;
+      other.jumpTo({ center: map.getCenter(), zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch() });
+    }
+    busy = false;
+  };
+  map.on("move", onMove);
+  return () => {
+    map.off("move", onMove);
+    group.delete(map);
+  };
 }
 
 /** MapLibre GL map. Import with next/dynamic({ ssr: false }) — it needs `window`. */
-export default function MapView({ bounds, children, className }: MapViewProps) {
+export default function MapView({ bounds, children, className, syncKey }: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
   const [ctx, setCtx] = useState<MapCtx>({ map: null, loaded: false, labelLayerId: undefined });
@@ -108,6 +139,7 @@ export default function MapView({ bounds, children, className }: MapViewProps) {
     if (!container.current || mapRef.current) return;
     let cancelled = false;
     let map: MLMap | null = null;
+    let detachSync: (() => void) | null = null;
     loadBasemapStyle().then((style) => {
       if (cancelled || !container.current) return;
       map = new MLMap({
@@ -129,15 +161,17 @@ export default function MapView({ bounds, children, className }: MapViewProps) {
         setCtx({ map, loaded: true, labelLayerId });
       });
       map.on("error", (e) => console.error("maplibre:", e.error?.message ?? e));
+      if (syncKey) detachSync = attachSync(map, syncKey);
       mapRef.current = map;
       (window as unknown as { __map?: MLMap }).__map = map; // debugging aid
     });
     return () => {
       cancelled = true;
+      detachSync?.();
       map?.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [syncKey]);
 
   // Fit only when the bounds *values* change — every API response is a new array.
   const boundsKey = bounds ? bounds.map((v) => v.toFixed(4)).join(",") : "";

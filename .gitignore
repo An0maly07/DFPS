@@ -23,10 +23,18 @@ out/
 backend/data/cog_exports/**/*.tif
 backend/data/cog_exports/**/*.tiff
 
-# ML artifacts
+# ML artifacts (Prithvi weights/ONNX are large; re-downloadable / re-exportable)
 *.onnx
 *.ubj
 *.joblib
+*.pth
+*.pt
+*.ckpt
+backend/data/prithvi/
+lightning_logs/
+
+# Recorded fallback demo video (large; regenerate with scripts/record_demo.mjs)
+docs/*.webm
 
 # OS / editor
 .DS_Store

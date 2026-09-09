@@ -15,7 +15,7 @@ import {
 } from "recharts";
 import { Panel } from "./ShapPanel";
 import { LEVEL_STYLE, fmt } from "@/lib/risk";
-import type { Forecast, Replay, Thresholds } from "@/lib/types";
+import type { FloodReplay, Forecast, Thresholds } from "@/lib/types";
 
 interface LiveProps {
   mode: "live";
@@ -23,7 +23,7 @@ interface LiveProps {
 }
 interface ReplayProps {
   mode: "replay";
-  replay: Replay;
+  replay: FloodReplay;
   thresholds: Thresholds | null;
   cursorDate: string | null;
   onPick?: (date: string) => void;

@@ -30,3 +30,6 @@ psycopg[binary]     # direct Postgres connection for schema DDL only
 
 # Drought indices (SPI/SPEI) — Phase 3
 climate-indices
+
+# Raster tile server (run locally via scripts/dev-titiler.ps1; deployed via deploy/modal_app.py)
+titiler.application

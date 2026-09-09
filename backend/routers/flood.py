@@ -18,7 +18,11 @@ from backend.services import supabase_client as db
 router = APIRouter(prefix="/api", tags=["flood"])
 
 # Class raster colours (0 = nodata handled by nodata=0 -> transparent)
-MASK_COLORMAP = {"1": [0, 0, 0, 0], "2": [40, 90, 200, 230], "3": [220, 30, 30, 230]}
+MASK_COLORMAP = {"1": [0, 0, 0, 0], "2": [40, 90, 200, 230], "3": [220, 30, 30, 230], "4": [160, 160, 160, 200]}
+AREA_NOTE = {
+    "sar_otsu": "SAR-detected open water only; flooding under vegetation/buildings is not visible",
+    "prithvi": "Optical (Sentinel-2) water from the Prithvi model; pixels under cloud/shadow are class 4 and cannot be assessed",
+}
 MAX_DATE_GAP_DAYS = 16  # one S1 revisit + slack
 
 
@@ -52,6 +56,8 @@ def tile_templates(urls: dict[str, str]) -> dict[str, str]:
     for key, name in (("vv_post_cog", "vv_post"), ("vv_pre_cog", "vv_pre")):
         if urls.get(key):
             out[name] = tile_url(urls[key], rescale="-25,0", colormap_name="gray")
+    if urls.get("s2_rgb_cog"):
+        out["s2_rgb"] = tile_url(urls["s2_rgb_cog"], nodata=0)
     return out
 
 
@@ -149,13 +155,18 @@ def flood_extent(
         "tiles": tile_templates(urls),
         "bounds": meta.get("bounds"),
         "flood_area_km2": meta.get("flood_area_km2"),
-        "area_note": "SAR-detected open water only; flooding under vegetation/buildings is not visible",
+        "area_note": AREA_NOTE[source],
         "thresholds_db": {
             "post": meta.get("otsu_threshold_post_db"),
             "pre": meta.get("otsu_threshold_pre_db"),
             "method": meta.get("threshold_method_post"),
         },
-        "classes": {"0": "no data", "1": "land", "2": "permanent/pre-event water", "3": "flood"},
+        "classes": meta.get("classes") or {"0": "no data", "1": "land", "2": "permanent/pre-event water", "3": "flood"},
+        "model": {
+            "version": meta.get("model_version"), "sensor": meta.get("sensor"),
+            "cloud_pct": meta.get("cloud_pct"), "usable_pct": meta.get("usable_pct"),
+            "val_metrics": meta.get("val_metrics"),
+        } if source == "prithvi" else None,
         "available_dates": available,
         "snapshots": snapshots,
         "peak_date": max(snapshots, key=lambda s: s["flood_area_km2"] or 0)["date"],
