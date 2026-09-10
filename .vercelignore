@@ -1,0 +1,9 @@
+# Vercel's Root Directory is `frontend`, but the CLI uploads from the repo root and does
+# not honour .gitignore here. Without this it walks ~3 GB of local rasters and checkpoints
+# and fails on the 100 MB per-file limit. None of it is needed to build the dashboard —
+# the API and COGs are served from Modal and Supabase.
+.venv
+**/__pycache__
+backend/data
+backend/models/artifacts
+backend/secrets

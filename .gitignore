@@ -4,9 +4,9 @@ __pycache__/
 .venv/
 *.egg-info/
 
-# Env / secrets
-.env
-.env.local
+# Env / secrets (.env.local is also written by `vercel link`)
+.env*
+!.env.example
 backend/secrets/
 *.serviceaccount.json
 firebase-adminsdk*.json
@@ -18,6 +18,7 @@ backend/data/cache/
 node_modules/
 .next/
 out/
+.vercel
 
 # Data artifacts (large rasters cached locally, re-derivable from GEE)
 backend/data/cog_exports/**/*.tif
