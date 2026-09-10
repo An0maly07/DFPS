@@ -241,7 +241,14 @@ export type Replay = FloodReplay | DroughtReplay;
 export interface RegionFeature {
   type: "Feature";
   id: number;
-  properties: { name: string; lat?: number; lon?: number; bounds?: [number, number, number, number] };
+  properties: {
+    name: string;
+    lat?: number;
+    lon?: number;
+    bounds?: [number, number, number, number];
+    /** Whether the flood-risk model has forecast points for this region. Absent on older APIs. */
+    flood_model?: boolean;
+  };
   geometry: GeoJSON.Polygon;
 }
 

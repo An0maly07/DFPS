@@ -18,6 +18,20 @@ export class ApiError extends Error {
   }
 }
 
+/** The flood-risk model is per-basin: /api/risk-score returns 422 for a district with no
+ *  forecast points, and the detail names every district it *does* cover. Returns that list
+ *  (so the UI can label the gap), or null when the error is something else. */
+export function floodModelCoverage(e: unknown): string[] | null {
+  if (!(e instanceof ApiError) || e.status !== 422) return null;
+  const detail = typeof e.detail === "string" ? e.detail : "";
+  if (!detail.includes("no forecast points configured")) return null;
+  const listed = detail.match(/covers:\s*\[(.*?)\]/)?.[1] ?? "";
+  return listed
+    .split(",")
+    .map((s) => s.trim().replace(/^['"]|['"]$/g, ""))
+    .filter(Boolean);
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, { cache: "no-store", ...init });
   if (!res.ok) {

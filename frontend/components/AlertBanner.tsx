@@ -13,12 +13,43 @@ interface Props {
   error?: string | null;
   onScoreNow?: () => void;
   scoring?: boolean;
+  /** False when the flood model has no forecast points for this district (see floodModelCoverage). */
+  covered?: boolean;
+  /** Districts the flood model does cover, for the "not available" notice. */
+  coveredDistricts?: string[];
 }
 
-export default function AlertBanner({ risk, river, district, mode, loading, error, onScoreNow, scoring }: Props) {
+export default function AlertBanner({
+  risk,
+  river,
+  district,
+  mode,
+  loading,
+  error,
+  onScoreNow,
+  scoring,
+  covered = true,
+  coveredDistricts = [],
+}: Props) {
   const level = risk?.level ?? "green";
   const s = LEVEL_STYLE[level];
   const riverStyle = river ? LEVEL_STYLE[river.tone] : null;
+
+  // Out-of-coverage is not an error: the district is simply outside the trained basin.
+  if (!covered) {
+    return (
+      <div className="bg-slate-700 px-5 py-4 text-slate-100 shadow-lg">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-baseline gap-x-8 gap-y-2">
+          <span className="text-xs uppercase tracking-widest opacity-80">Flood alert · {district}</span>
+          <span className="text-xl font-semibold">No flood risk model for this district</span>
+          <span className="max-w-3xl text-sm opacity-85">
+            The model is trained on {coveredDistricts.join(", ") || "another basin"} and its flood threshold is a return-period
+            discharge for that river, so it cannot be applied here. Drought indices below still cover {district}.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`${risk ? s.bg : "bg-slate-700"} ${risk ? s.text : "text-slate-100"} px-5 py-4 shadow-lg`}>

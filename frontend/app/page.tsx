@@ -13,7 +13,7 @@ import LayerToggles, { type LayerState } from "@/components/LayerToggles";
 import ReplayEventSelector from "@/components/ReplayEventSelector";
 import ShapPanel from "@/components/ShapPanel";
 import TimeSlider from "@/components/TimeSlider";
-import { ApiError, API_URL, api } from "@/lib/apiClient";
+import { ApiError, API_URL, api, floodModelCoverage } from "@/lib/apiClient";
 import { DROUGHT_STYLE, fmt, fromFresh, fromLatest, fromReplay, riverStatus } from "@/lib/risk";
 import type { DroughtIndex, EventsList, FloodExtent, Forecast, Health, RegionsFC, Replay, ReplayEntry, RiskView, TileSet } from "@/lib/types";
 
@@ -50,16 +50,29 @@ export default function Dashboard() {
   const [replay, setReplay] = useState<Tagged<Replay> | null>(null);
   const [replayIdx, setReplayIdx] = useState(0);
   const [prithvi, setPrithvi] = useState<Tagged<FloodExtent> | null>(null);
+  // Districts the flood model covers, learned from the API's 422. null = not established yet.
+  const [floodDistricts, setFloodDistricts] = useState<string[] | null>(null);
   const [layers, setLayers] = useState<LayerState>({ showMask: true, showSar: false, sarImage: "vv_post", showDrought: true, compare: false });
 
   const isReplay = mode !== "live";
   const region = regions?.features.find((f) => f.properties.name === district)?.properties;
   const bounds = region?.bounds ?? null;
+  // Assume covered until the API tells us otherwise, so nothing is hidden on a cold load.
+  const floodCovered = floodDistricts === null || floodDistricts.includes(district);
 
   // --- bootstrap ---------------------------------------------------------------------
   useEffect(() => {
     api.health().then(setHealth).catch(() => setHealth(null));
-    api.regions().then(setRegions).catch(() => setRegions(null));
+    api
+      .regions()
+      .then((fc) => {
+        setRegions(fc);
+        // Older APIs omit flood_model; leave coverage unknown and learn it from the 422 instead.
+        if (fc.features.some((f) => f.properties.flood_model !== undefined)) {
+          setFloodDistricts(fc.features.filter((f) => f.properties.flood_model).map((f) => f.properties.name));
+        }
+      })
+      .catch(() => setRegions(null));
     api.events().then((e) => setEvents(e.events)).catch(() => setEvents([]));
   }, []);
 
@@ -70,10 +83,13 @@ export default function Dashboard() {
     const lat = region.lat ?? 16.7;
     const lon = region.lon ?? 74.24;
     api.forecast(lat, lon, 7, 7).then((f) => setForecast(tagged(d, f))).catch((e) => setForecast(tagged<Forecast>(d, null, errText(e))));
-    api
-      .latestRisk(d)
-      .then((r) => setRisk(tagged(d, fromLatest(r))))
-      .catch((e) => setRisk(tagged<RiskView>(d, null, e instanceof ApiError && e.status === 404 ? "No stored score yet — press Score now" : errText(e))));
+    // Out-of-coverage districts have no score to fetch; the banner shows the notice instead.
+    if (floodCovered) {
+      api
+        .latestRisk(d)
+        .then((r) => setRisk(tagged(d, fromLatest(r))))
+        .catch((e) => setRisk(tagged<RiskView>(d, null, e instanceof ApiError && e.status === 404 ? "No stored score yet — press Score now" : errText(e))));
+    }
     api.droughtIndex(d).then((x) => setDrought(tagged(d, x))).catch((e) => setDrought(tagged<DroughtIndex>(d, null, errText(e))));
     api
       .floodExtent(d, "peak") // open on the peak-extent scene; the slider still reaches every date
@@ -82,17 +98,17 @@ export default function Dashboard() {
         setDateIdx({ key: d, i: Math.max(0, fe.available_dates.indexOf(fe.captured_at)) });
       })
       .catch((e) => setExtent(tagged<FloodExtent>(d, null, e instanceof ApiError && e.status === 404 ? "No SAR flood extents for this district" : errText(e))));
-  }, [region, district, isReplay]);
+  }, [region, district, isReplay, floodCovered]);
 
   // poll the stored score (PLAN.md §6.2)
   useEffect(() => {
-    if (isReplay) return;
+    if (isReplay || !floodCovered) return;
     const d = district;
     const id = setInterval(() => {
       api.latestRisk(d).then((r) => setRisk(tagged(d, fromLatest(r)))).catch(() => undefined);
     }, POLL_MS);
     return () => clearInterval(id);
-  }, [district, isReplay]);
+  }, [district, isReplay, floodCovered]);
 
   // time-slider → swap COG (debounced)
   const extentView = pick(extent, district);
@@ -119,7 +135,13 @@ export default function Dashboard() {
     api
       .scoreRisk(d, undefined, true)
       .then((r) => setRisk(tagged(d, fromFresh(r))))
-      .catch((e) => setRisk(tagged<RiskView>(d, null, errText(e))))
+      .catch((e) => {
+        // 422 here means the district is outside the model's basin, not a failure — record the
+        // coverage the API reported so the banner explains it instead of showing a raw error.
+        const covers = floodModelCoverage(e);
+        if (covers) setFloodDistricts(covers);
+        setRisk(tagged<RiskView>(d, null, covers ? null : errText(e)));
+      })
       .finally(() => setScoring(false));
   };
 
@@ -270,6 +292,8 @@ export default function Dashboard() {
           loading={isReplay ? replayView.loading : riskLive.loading}
           onScoreNow={scoreNow}
           scoring={scoring}
+          covered={isReplay || floodCovered}
+          coveredDistricts={floodDistricts ?? []}
         />
       )}
 

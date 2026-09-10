@@ -10,7 +10,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, HTTPException, Query
 
 from backend.config import COG_DIR, DATA_DIR, settings
-from backend.models.features import LEAD_DAYS
+from backend.models.features import LEAD_DAYS, REGION_POINTS
 from backend.regions import REGIONS
 from backend.services import open_meteo as om
 from backend.services import supabase_client as db
@@ -180,7 +180,11 @@ def flood_extent(
 def regions() -> dict[str, Any]:
     fc = db.regions_geojson()
     for f in fc.get("features", []):
-        r = REGIONS.get(f["properties"]["name"])
+        name = f["properties"]["name"]
+        # flood_model: the risk model is trained per basin, so it does not cover every region
+        # (see /api/risk-score, which 422s otherwise). Lets the UI say so before it asks.
+        f["properties"]["flood_model"] = name in REGION_POINTS
+        r = REGIONS.get(name)
         if r:
             f["properties"].update({"lat": r.lat, "lon": r.lon, "bounds": r.bounds})
     return fc
