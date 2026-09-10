@@ -8,8 +8,11 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI, Request
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
+# pyrefly: ignore [missing-import]
 from fastapi.responses import JSONResponse
 
 from backend.config import settings
@@ -69,12 +72,22 @@ app.include_router(events.router)
 
 @app.get("/health", tags=["meta"])
 def health() -> dict:
+    import requests
+
     from backend.models.xgboost_risk import MODEL_PATH
     from backend.services.notify import channels_configured
+
+    titiler_reachable = False
+    try:
+        r = requests.get(f"{settings.titiler_url}/healthz", timeout=1.5)
+        titiler_reachable = r.ok
+    except requests.RequestException:
+        pass
 
     return {
         "status": "ok",
         "model_loaded": MODEL_PATH.exists(),
         "titiler_url": settings.titiler_url,
+        "titiler_reachable": titiler_reachable,
         "alert_channels": channels_configured(),
     }
