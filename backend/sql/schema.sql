@@ -1,4 +1,4 @@
--- Indradhanu schema — PLAN.md §5, plus indexes and a unique region name.
+-- Horizon schema — PLAN.md §5, plus indexes and a unique region name.
 -- Idempotent: safe to re-run. Applied by backend/scripts/apply_schema.py
 -- (or paste into the Supabase SQL editor).
 

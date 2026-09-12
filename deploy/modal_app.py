@@ -1,4 +1,4 @@
-"""Modal deployment of the Indradhanu API + TiTiler (PLAN.md §7).
+"""Modal deployment of the Horizon API + TiTiler (PLAN.md §7).
 
 Two always-warm web endpoints in one Modal app:
   * api   → FastAPI backend (backend.main:app)
@@ -6,12 +6,12 @@ Two always-warm web endpoints in one Modal app:
 
 Setup (once):
   pip install modal && modal setup
-  modal secret create indradhanu-env \
+  modal secret create horizon-env \
       SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… SUPABASE_ANON_KEY=… \
       GEE_PROJECT_ID=… GEE_SERVICE_ACCOUNT_JSON_CONTENT="$(cat backend/secrets/<key>.json)" \
       COG_SOURCE=remote INTERNAL_API_TOKEN=<random> \
       CORS_ORIGINS=https://<your-vercel-app>.vercel.app \
-      TITILER_URL=https://<workspace>--indradhanu-tiles.modal.run
+      TITILER_URL=https://<workspace>--horizon-tiles.modal.run
 Deploy:
   modal deploy deploy/modal_app.py
 The printed URLs go into Vercel's NEXT_PUBLIC_API_URL (api) and the secret's TITILER_URL (tiles);
@@ -56,18 +56,18 @@ GDAL_ENV = {
 }
 tiles_image = modal.Image.debian_slim(python_version="3.11").pip_install("titiler.application>=0.21").env(GDAL_ENV)
 
-app = modal.App("indradhanu")
+app = modal.App("horizon")
 
 
 @app.function(
     image=api_image,
-    secrets=[modal.Secret.from_name("indradhanu-env")],
+    secrets=[modal.Secret.from_name("horizon-env")],
     min_containers=1,          # no cold start during judging
     timeout=300,
     scaledown_window=600,
 )
 @modal.concurrent(max_inputs=32)
-@modal.asgi_app(label="indradhanu-api")
+@modal.asgi_app(label="horizon-api")
 def api():
     from backend.main import app as fastapi_app
 
@@ -76,7 +76,7 @@ def api():
 
 @app.function(image=tiles_image, min_containers=1, timeout=120, scaledown_window=600)
 @modal.concurrent(max_inputs=64)
-@modal.asgi_app(label="indradhanu-tiles")
+@modal.asgi_app(label="horizon-tiles")
 def tiles():
     from titiler.application.main import app as titiler_app
 

@@ -1,4 +1,4 @@
-"""Indradhanu API — FastAPI entrypoint (PLAN.md §4).
+"""Horizon API — FastAPI entrypoint (PLAN.md §4).
 
 Run from the repo root:  uvicorn backend.main:app --reload --port 8000
 """
@@ -18,7 +18,7 @@ from fastapi.responses import JSONResponse
 from backend.config import settings
 from backend.routers import alerts, drought, events, flood, risk
 
-log = logging.getLogger("indradhanu")
+log = logging.getLogger("horizon")
 
 
 @asynccontextmanager
@@ -35,7 +35,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Indradhanu — Drought & Flood Risk API",
+    title="Horizon — Drought & Flood Risk API",
     version="0.1.0",
     description="Sentinel-1 SAR flood extent, XGBoost+SHAP risk scoring, GloFAS forecasts, drought indices.",
     lifespan=lifespan,

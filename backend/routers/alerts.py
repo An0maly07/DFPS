@@ -91,7 +91,7 @@ def trigger(req: TriggerRequest, x_internal_token: str | None = Header(None)) ->
                 "reason": f"level below {FIRE_AT}"}
 
     subs = db.list_subscribers(region["id"])
-    title = f"[Indradhanu] {level.upper()} flood alert — {req.district}"
+    title = f"[Horizon] {level.upper()} flood alert — {req.district}"
     body = req.message or (
         f"Flood risk for {req.district} is {level.upper()}"
         + (f" (score {score:.2f})" if score is not None else "")

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-#  Indradhanu — One-Click Dev Launcher
+#  Horizon — One-Click Dev Launcher
 #  Starts the FastAPI backend + Next.js frontend together.
 #  Usage:  ./start.sh
 # ============================================================
@@ -20,7 +20,7 @@ NC='\033[0m' # No Color
 
 echo ""
 echo -e "${CYAN}╔══════════════════════════════════════╗${NC}"
-echo -e "${CYAN}║     🌦  Indradhanu Dev Launcher      ║${NC}"
+echo -e "${CYAN}║      🌦  Horizon Dev Launcher        ║${NC}"
 echo -e "${CYAN}╚══════════════════════════════════════╝${NC}"
 echo ""
 

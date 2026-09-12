@@ -1,5 +1,5 @@
 2# PLAN.md — Drought & Flood Risk Prediction Platform
-### Indradhanu 2026 — End-to-End Live Demo Blueprint
+### Horizon 2026 — End-to-End Live Demo Blueprint
 
 **Target region:** Maharashtra (recommend Kolhapur–Sangli or Marathwada for validation against a real historical event)
 **Team size assumed:** 4 (roles split below — adjust to your actual headcount)

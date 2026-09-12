@@ -237,7 +237,7 @@ export default function Dashboard() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4">
           <div>
             <h1 className="text-lg font-bold tracking-tight">
-              Indradhanu <span className="font-normal text-slate-400">· Drought &amp; Flood Risk</span>
+              Horizon <span className="font-normal text-slate-400">· Drought &amp; Flood Risk</span>
             </h1>
             <p className="text-[11px] text-slate-500">Sentinel-1 SAR · Prithvi-EO · GloFAS · XGBoost + SHAP · SPI/VHI/SMAP</p>
           </div>

@@ -1,7 +1,7 @@
 // Fallback demo video (PLAN.md §7): scripted walkthrough of the dashboard recorded with Playwright.
 //   cd frontend && npx playwright install chromium   (once)
 //   node scripts/record_demo.mjs [http://127.0.0.1:3000] [out_dir]
-// Produces <out_dir>/indradhanu-demo.webm (~2 min): live view → Score now → 2021 flood replay
+// Produces <out_dir>/horizon-demo.webm (~2 min): live view → Score now → 2021 flood replay
 // with the model going Red before the peak → SAR-vs-Prithvi compare → 2018 drought replay.
 import { chromium } from "playwright";
 import { rename, mkdir } from "node:fs/promises";
@@ -67,7 +67,7 @@ await pause(5000);
 const video = page.video();
 await context.close();
 const src = await video.path();
-const dst = path.join(outDir, "indradhanu-demo.webm");
+const dst = path.join(outDir, "horizon-demo.webm");
 await rename(src, dst);
 await browser.close();
 console.log("wrote", dst);

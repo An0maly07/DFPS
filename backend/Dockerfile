@@ -1,5 +1,5 @@
-# Indradhanu API image (Cloud Run / any container host). Build from the repo root:
-#   docker build -f backend/Dockerfile -t indradhanu-api .
+# Horizon API image (Cloud Run / any container host). Build from the repo root:
+#   docker build -f backend/Dockerfile -t horizon-api .
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1

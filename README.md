@@ -1,4 +1,4 @@
-﻿# Indradhanu — Drought & Flood Risk Platform
+﻿# Horizon — Drought & Flood Risk Platform
 
 Sentinel-1 SAR flood extent (edge-Otsu) · Open-Meteo / GloFAS forecasts · XGBoost + SHAP risk
 scoring · SPI/SPEI/VHI/SMAP drought indices · FastAPI · Supabase/PostGIS · Next.js + MapLibre + TiTiler.
@@ -69,7 +69,7 @@ C++ toolchain on Windows. The fine-tune is sized for a 4 GB GPU (micro-batch 2, 
 
 | Component | Where | How |
 |---|---|---|
-| API + TiTiler | Modal | `pip install modal; modal setup; modal secret create indradhanu-env …; modal deploy deploy/modal_app.py` (see the file header) |
+| API + TiTiler | Modal | `pip install modal; modal setup; modal secret create horizon-env …; modal deploy deploy/modal_app.py` (see the file header) |
 | Frontend | Vercel | import the repo, root `frontend/`, env `NEXT_PUBLIC_API_URL=<Modal api URL>` |
 | COGs | Supabase Storage | already uploaded by the export scripts; set `COG_SOURCE=remote` in the Modal secret |
 
